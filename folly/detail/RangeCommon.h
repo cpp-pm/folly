@@ -19,7 +19,9 @@
 #include <algorithm>
 #include <string>
 
+#if defined(FOLLY_USE_GLOG)
 #include <glog/logging.h>
+#endif
 
 #include <folly/Likely.h>
 
@@ -56,7 +58,9 @@ class StringPieceLite {
     return size() == 0;
   }
   const char& operator[](size_t i) const {
+#if defined(FOLLY_USE_GLOG)
     DCHECK_GT(size(), i);
+#endif
     return b_[i];
   }
   template <typename Range>

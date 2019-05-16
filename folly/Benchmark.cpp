@@ -97,7 +97,9 @@ size_t getGlobalBenchmarkBaselineIndex() {
       [global](const detail::BenchmarkRegistration& v) {
         return v.name == global;
       });
+#if defined(FOLLY_USE_GLOG)
   CHECK(it != benchmarks().end());
+#endif
   return size_t(std::distance(benchmarks().begin(), it));
 }
 
@@ -342,7 +344,9 @@ static void printBenchmarkResults(const vector<detail::BenchmarkResult>& data) {
     return;
   }
 
+#if defined(FOLLY_USE_GLOG)
   CHECK(FLAGS_json_verbose || FLAGS_json) << "Cannot print benchmark results";
+#endif
 }
 
 void benchmarkResultsToDynamic(
@@ -446,7 +450,9 @@ void printResultComparison(
 }
 
 void runBenchmarks() {
+#if defined(FOLLY_USE_GLOG)
   CHECK(!benchmarks().empty());
+#endif
 
   vector<detail::BenchmarkResult> results;
   results.reserve(benchmarks().size() - 1);

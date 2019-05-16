@@ -52,6 +52,7 @@ set(FOLLY_SUPPORT_SHARED_LIBRARY "${BUILD_SHARED_LIBS}")
 # Configuration similar to:
 # * https://github.com/facebook/react-native/blob/v0.59.6/third-party-podspecs/Folly.podspec#L20-L34
 option(FOLLY_POD_CONFIGURATION "Pod configuration" OFF)
+option(FOLLY_USE_GLOG "Use glog library" ON)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   # Check target architecture
@@ -85,7 +86,7 @@ set(FOLLY_HAVE_PTHREAD "${CMAKE_USE_PTHREADS_INIT}")
 list(APPEND CMAKE_REQUIRED_LIBRARIES Threads::Threads)
 list(APPEND FOLLY_LINK_LIBRARIES Threads::Threads)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(MSVC)
   include(FollyCompilerMSVC)
 else()
   include(FollyCompilerUnix)
@@ -99,6 +100,13 @@ if(FOLLY_POD_CONFIGURATION)
         folly_deps
         INTERFACE
         FOLLY_MOBILE
+    )
+  endif()
+  if(FOLLY_USE_GLOG)
+    target_compile_definitions(
+        folly_deps
+        INTERFACE
+        FOLLY_USE_GLOG
     )
   endif()
 else()
@@ -243,9 +251,11 @@ hunter_add_package(double-conversion)
 find_package(double-conversion CONFIG REQUIRED)
 target_link_libraries(folly_deps INTERFACE double-conversion::double-conversion)
 
-hunter_add_package(glog)
-find_package(glog CONFIG REQUIRED)
-target_link_libraries(folly_deps INTERFACE glog::glog)
+if(FOLLY_USE_GLOG)
+  hunter_add_package(glog)
+  find_package(glog CONFIG REQUIRED)
+  target_link_libraries(folly_deps INTERFACE glog::glog)
+endif()
 
 hunter_add_package(Boost)
 find_package(Boost CONFIG REQUIRED)

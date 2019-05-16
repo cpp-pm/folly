@@ -16,14 +16,24 @@
 
 #include <folly/lang/Assume.h>
 
+#if defined(FOLLY_USE_GLOG)
 #include <glog/logging.h>
+#else
+#include <stdexcept> // std::runtime_error
+#endif
 
 namespace folly {
 
 namespace detail {
 
 void assume_check(bool cond) {
+#if defined(FOLLY_USE_GLOG)
   CHECK(cond) << "compiler-hint assumption fails at runtime";
+#else
+  if (!cond) {
+    throw std::runtime_error("compiler-hint assumption fails at runtime");
+  }
+#endif
 }
 
 } // namespace detail

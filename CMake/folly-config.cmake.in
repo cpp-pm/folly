@@ -9,9 +9,11 @@
 #  FOLLY_LIBRARIES
 
 @PACKAGE_INIT@
- 
+
 find_package(double-conversion CONFIG REQUIRED)
-find_package(glog CONFIG REQUIRED)
+if(@FOLLY_USE_GLOG@)
+  find_package(glog CONFIG REQUIRED)
+endif()
 find_package(Boost CONFIG REQUIRED)
 
 set_and_check(FOLLY_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")

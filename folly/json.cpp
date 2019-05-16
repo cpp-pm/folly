@@ -82,7 +82,11 @@ struct Printer {
         printArray(v);
         break;
       default:
+#if defined(FOLLY_USE_GLOG)
         CHECK(0) << "Bad type " << v.type();
+#else
+        std::abort();
+#endif
     }
   }
 
@@ -347,7 +351,9 @@ std::string parseString(Input& in);
 dynamic parseNumber(Input& in);
 
 dynamic parseObject(Input& in) {
+#if defined(FOLLY_USE_GLOG)
   DCHECK_EQ(*in, '{');
+#endif
   ++in;
 
   dynamic ret = dynamic::object;
@@ -391,7 +397,9 @@ dynamic parseObject(Input& in) {
 }
 
 dynamic parseArray(Input& in) {
+#if defined(FOLLY_USE_GLOG)
   DCHECK_EQ(*in, '[');
+#endif
   ++in;
 
   dynamic ret = dynamic::array;
@@ -528,7 +536,9 @@ std::string decodeUnicodeEscape(Input& in) {
 }
 
 std::string parseString(Input& in) {
+#if defined(FOLLY_USE_GLOG)
   DCHECK_EQ(*in, '\"');
+#endif
   ++in;
 
   std::string ret;
@@ -712,7 +722,9 @@ void escapeStringImpl(
         word = folly::partialLoadUnaligned<uint64_t>(firstEsc, avail);
       }
       auto prefix = firstEscapableInWord<EnableExtraAsciiEscapes>(word, opts);
+#if defined(FOLLY_USE_GLOG)
       DCHECK_LE(prefix, avail);
+#endif
       firstEsc += prefix;
       if (prefix < 8) {
         break;
@@ -738,8 +750,10 @@ void escapeStringImpl(
       // we do utf8 validation progressively along with the
       // string-escaping instead of two separate passes.
 
+#if defined(FOLLY_USE_GLOG)
       // As the encoding progresses, q will stay at or ahead of p.
       CHECK_GE(q, p);
+#endif
 
       // As p catches up with q, move q forward.
       if (q == p) {

@@ -30,7 +30,9 @@
 #include <type_traits>
 
 #include <boost/function_types/function_arity.hpp>
+#if defined(FOLLY_USE_GLOG)
 #include <glog/logging.h>
+#endif
 
 DECLARE_bool(benchmark);
 
